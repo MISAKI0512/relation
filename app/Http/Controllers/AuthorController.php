@@ -4,19 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;//追記
 
 class AuthorController extends Controller
 {
     public function index()
     {
-        $authors = Author::all();
-        return view('index', ['authors' => $authors]);
+        $user = Auth::user();
+        $authors = Author::paginate(4);
+        $param = ['authors' => $authors, 'user' =>$user];
+        return view('index', $param);
     }
-		// 追記：ここから
+
     public function find()
     {
         return view('find', ['input' => '']);
     }
+
     public function search(Request $request)
     {
         $author = Author::find($request->input);
@@ -26,7 +30,6 @@ class AuthorController extends Controller
         ];
         return view('find', $param);
     }
-		// 追記：ここまで
 
 
 // middleware
@@ -48,8 +51,28 @@ public function post(Request $request)
 
 public function relate(Request $request)
     {
-        $authors = Author::all();
-        return view('author.index', ['authors' => $authors]);
+        $hasbooks = Author::has('book')->get();
+        $nobooks = Author::doesntHave('book')->get();
+        $param = ['hasbooks' => $hasbooks, 'nobooks' => $nobooks];
+        return view('author.index',$param);
     }
 
+public function check(Request $request)
+    {
+    $text = ['text' => 'ログインして下さい。'];
+    return view('auth', $text);
+    }
+
+    public function checkUser(Request $request)
+    {
+    $email = $request->email;
+    $password = $request->password;
+    if (Auth::attempt(['email' => $email,
+            'password' => $password])) {
+        $text =   Auth::user()->name . 'さんがログインしました';
+    } else {
+        $text = 'ログインに失敗しました';
+    }
+    return view('auth', ['text' => $text]);
+    }
 }

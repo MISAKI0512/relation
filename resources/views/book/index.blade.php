@@ -13,6 +13,8 @@
       background-color: #EEEEEE;
       text-align: center;
     }
+
+
 </style>
 @section('title', 'book.index.blade.php')
 

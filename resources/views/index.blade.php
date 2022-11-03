@@ -1,44 +1,41 @@
 @extends('layouts.default')
 <style>
-    th{
-      background-color:#289ADC;
-      color:white;
-      padding:5px 40px;
+    th {
+      background-color: #289ADC;
+      color: white;
+      padding: 5px 40px;
     }
     tr:nth-child(odd) td{
-      background-color:#FFFFFF;
+      background-color: #FFFFFF;
     }
-    td{
-      padding:25px 40px;
-      background-color:#EEEEEE;
+    td {
+      padding: 25px 40px;
+      background-color: #EEEEEE;
       text-align: center;
     }
+    svg.w-5.h-5{width 30px; height : 30px;}
+
 </style>
-@section('title','index.blade.php')
+@section('title', 'index.blade.php')
 
 @section('content')
+@if (Auth::check())
+<p>ログイン中ユーザー：{{$user->name . ' メール' . $user->email . ''}}</p>
+@else
+<p>ログインしてください。(<a href="/login">ログイン</a> | 
+ <a href="/register">登録</a>))</p>
+ @endif
 <table>
   <tr>
-    <th>id</th>
-    <th>name</th>
-    <th>age</th>
-    <th>nationality</th>
+    <th>Data</th>
   </tr>
   @foreach ($authors as $author)
   <tr>
     <td>
-      {{$author->id}}
-    </td>
-    <td>
-      {{$author->name}}
-    </td>
-    <td>
-      {{$author->age}}
-    </td>
-    <td>
-      {{$author->nationality}}
+      {{$author->getDetail()}}
     </td>
   </tr>
   @endforeach
 </table>
+{{ $authors->links() }}
 @endsection
